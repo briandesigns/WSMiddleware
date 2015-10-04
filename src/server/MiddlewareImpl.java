@@ -153,7 +153,7 @@ public class MiddlewareImpl implements server.ws.ResourceManager {
     public boolean addFlight(int id, int flightNumber,
                              int numSeats, int flightPrice) {
 //        return flightClient.proxy.addFlight(id, flightNumber, numSeats, flightPrice);
-        return true;
+        return false;
     }
 
     @Override
