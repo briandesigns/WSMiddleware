@@ -83,12 +83,54 @@
         </java>
     </target>
 
+    <target name="start-tomcat-middleware">
+        <echo message="Starting Tomcat and deploying middleware ... "/>
+        <java fork="true" classname="server.middleware.Main">
+            <classpath>
+                <path refid="jaxws.classpath"/>
+                <pathelement location="${basedir}/build/classes"/>
+            </classpath>
+            <jvmarg value="-Djava.security.policy=${basedir}/etc/server.policy"/>
+            <arg value="${service.name}"/>
+            <arg value="${service.port}"/>
+            <arg value="${basedir}/webapps"/>
+        </java>
+    </target>
+
+
     <target name="server" depends="setup">
         <antcall target="clean"/>
         <antcall target="build-server"/>
         <antcall target="create-war"/>
         <antcall target="deploy-war"/>
         <antcall target="start-tomcat"/>        
+    </target>
+
+    <target name="build-middleware" depends="setup">
+        <annotationProcessing
+                fork="true"
+                debug="true"
+                verbose="${verbose}"
+                destdir="${basedir}/build/classes"
+                srcdir="${basedir}/src"
+                includes="server/**"
+                excludes="server/ws/Main.java"
+                sourceDestDir="${basedir}/build/classes"
+                procOnly="false"
+                sourcepath="${basedir}/src">
+            <classpath>
+                <path refid="jaxws.classpath"/>
+                <pathelement location="${basedir}/src"/>
+            </classpath>
+        </annotationProcessing>
+    </target>
+
+    <target name="middleware" depends="setup">
+        <antcall target="clean"/>
+        <antcall target="build-middleware"/>
+        <antcall target="create-war"/>
+        <antcall target="deploy-war"/>
+        <antcall target="start-tomcat-middleware"/>
     </target>
 
     <taskdef name="wsimport" classname="com.sun.tools.ws.ant.WsImport">
