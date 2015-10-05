@@ -22,11 +22,11 @@ public class MiddlewareImpl implements server.ws.ResourceManager {
         protected MWClient flightClient;
         protected MWClient carClient;
         protected MWClient roomClient;
-//
+
     public MiddlewareImpl() {
         try {
-            carClient = new MWClient("rm", "localhost", 8083);
-            flightClient = new MWClient("rm", "localhost", 8084);
+            flightClient = new MWClient("rm", "localhost", 8083);
+            carClient = new MWClient("rm", "localhost", 8084);
             roomClient = new MWClient("rm", "localhost", 8085);
         } catch (Exception e) {
             e.printStackTrace();
@@ -221,8 +221,8 @@ public class MiddlewareImpl implements server.ws.ResourceManager {
     // its current price.
     @Override
     public boolean addCars(int id, String location, int numCars, int carPrice) {
-//        return carClient.proxy.addCars(id, location, numCars, carPrice);
-        return false;
+        return carClient.proxy.addCars(id, location, numCars, carPrice);
+//        return false;
     }
 
     // Delete cars from a location.
@@ -254,8 +254,7 @@ public class MiddlewareImpl implements server.ws.ResourceManager {
     // its current price.
     @Override
     public boolean addRooms(int id, String location, int numRooms, int roomPrice) {
-//        return roomClient.proxy.addRooms(id, location, numRooms, roomPrice);
-        return false;
+        return roomClient.proxy.addRooms(id, location, numRooms, roomPrice);
     }
 
     // Delete rooms from a location.

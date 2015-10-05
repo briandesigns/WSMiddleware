@@ -73,12 +73,12 @@
             dest="${basedir}/webapps/${service.name}"/>
     </target>
 
-    <target name="start-tomcat">
+    <target name="start-tomcat" depends="build-main">
         <echo message="Starting Tomcat and deploying service ... "/>
-        <java fork="true" classname="server.ws.Main">
+        <java fork="true" classname="main.Main">
             <classpath>
                 <path refid="jaxws.classpath"/>
-                <pathelement location="${basedir}/build/classes"/>
+                <pathelement location="${basedir}/build"/>
             </classpath>
             <jvmarg value="-Djava.security.policy=${basedir}/etc/server.policy"/>
             <arg value="${service.name}"/>
@@ -87,12 +87,12 @@
         </java>
     </target>
 
-    <target name="start-tomcat-middleware">
+    <target name="start-tomcat-middleware" depends="build-mainmw">
         <echo message="Starting Tomcat and deploying middleware ... "/>
-        <java fork="true" classname="middleware.Main">
+        <java fork="true" classname="mainmw.Main">
             <classpath>
                 <path refid="jaxws.classpath"/>
-                <pathelement location="${basedir}/build/classes"/>
+                <pathelement location="${basedir}/build"/>
             </classpath>
             <jvmarg value="-Djava.security.policy=${basedir}/etc/server.policy"/>
             <arg value="${middleware.name}"/>
@@ -119,6 +119,16 @@
                 <!--wsdl="http://${service.host}:${service.port}/${service.name}/service?wsdl">-->
         <!--</wsimport>-->
     <!--</target>-->
+
+    <target name="build-mainmw">
+        <javac
+                fork="true"
+                srcdir="${basedir}/src/"
+                destdir="${basedir}/build"
+                includes="mainmw/**">
+            <classpath refid="jaxws.classpath"/>
+        </javac>
+    </target>
 
     <target name="build-middleware" depends="setup">
         <annotationProcessing
@@ -202,6 +212,16 @@
                 package="client"
                 wsdl="http://${middleware.host}:${middleware.port}/${middleware.name}/mwservice?wsdl">
         </wsimport>
+    </target>
+
+    <target name="build-main">
+        <javac
+                fork="true"
+                srcdir="${basedir}/src/"
+                destdir="${basedir}/build"
+                includes="main/**">
+            <classpath refid="jaxws.classpath"/>
+        </javac>
     </target>
 
     <target name="build-client" depends="generate-client">
