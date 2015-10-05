@@ -110,7 +110,7 @@ public class MiddlewareImpl implements server.ws.ResourceManager {
 
     // Reserve an item.
     protected boolean reserveItem(int id, int customerId,
-                                  String key, String location) {
+                                  String key, String location) throws Exception {
         Trace.info("RM::reserveItem(" + id + ", " + customerId + ", "
                 + key + ", " + location + ") called.");
         // Read customer object if it exists (and read lock it).
@@ -120,7 +120,17 @@ public class MiddlewareImpl implements server.ws.ResourceManager {
                     + key + ", " + location + ") failed: customer doesn't exist.");
             return false;
         }
+        MWClient proxy;
 
+        if(key.contains("car-")) {
+            proxy = this.carClient;
+        } else if (key.contains("flight-")) {
+            proxy = this.flightClient;
+        } else if (key.contains("room-")) {
+            proxy = this.roomClient;
+        } else {
+            throw new Exception("can't reserve this");
+        }
         // Check if the item is available.
         ReservableItem item = (ReservableItem) readData(id, key);
         if (item == null) {
@@ -160,21 +170,18 @@ public class MiddlewareImpl implements server.ws.ResourceManager {
 
     @Override
     public boolean deleteFlight(int id, int flightNumber) {
-//        return flightClient.proxy.deleteLfight(id, flightNumber);
-        return false;
+        return flightClient.proxy.deleteFlight(id, flightNumber);
     }
 
     // Returns the number of empty seats on this flight.
     @Override
     public int queryFlight(int id, int flightNumber) {
-//        return flightClient.proxy.queryFlight(id, flightNumber);
-        return 0;
+        return flightClient.proxy.queryFlight(id, flightNumber);
     }
 
     // Returns price of this flight.
     public int queryFlightPrice(int id, int flightNumber) {
-//        return flightClient.proxy.queryFlightPrice(id, flightNumber);
-        return 0;
+        return flightClient.proxy.queryFlightPrice(id, flightNumber);
     }
 
     /*
@@ -222,28 +229,24 @@ public class MiddlewareImpl implements server.ws.ResourceManager {
     @Override
     public boolean addCars(int id, String location, int numCars, int carPrice) {
         return carClient.proxy.addCars(id, location, numCars, carPrice);
-//        return false;
     }
 
     // Delete cars from a location.
     @Override
     public boolean deleteCars(int id, String location) {
-//        return carClient.proxy.deleteCars(id, location);
-        return false;
+        return carClient.proxy.deleteCars(id, location);
     }
 
     // Returns the number of cars available at a location.
     @Override
     public int queryCars(int id, String location) {
-//        return carClient.proxy.queryCars(id, location);
-        return 0;
+        return carClient.proxy.queryCars(id, location);
     }
 
     // Returns price of cars at this location.
     @Override
     public int queryCarsPrice(int id, String location) {
-//        return carClient.proxy.queryCarsPrice(id, location);
-        return 0;
+        return carClient.proxy.queryCarsPrice(id, location);
     }
 
 
@@ -260,22 +263,19 @@ public class MiddlewareImpl implements server.ws.ResourceManager {
     // Delete rooms from a location.
     @Override
     public boolean deleteRooms(int id, String location) {
-//        return roomClient.proxy.deleteRooms(id, location);
-        return false;
+        return roomClient.proxy.deleteRooms(id, location);
     }
 
     // Returns the number of rooms available at a location.
     @Override
     public int queryRooms(int id, String location) {
-//        return roomClient.proxy.queryRooms(id, location);
-        return 0;
+        return roomClient.proxy.queryRooms(id, location);
     }
 
     // Returns room price at this location.
     @Override
     public int queryRoomsPrice(int id, String location) {
-//        return roomClient.proxy.queryRoomsPrice(id, location);
-        return 0;
+        return roomClient.proxy.queryRoomsPrice(id, location);
     }
 
 
