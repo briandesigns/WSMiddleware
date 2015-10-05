@@ -6,19 +6,19 @@ import java.net.MalformedURLException;
 
 public class WSClient {
 
-    ResourceManagerImplService service;
+    MiddlewareImplService service;
     
-    public ResourceManager proxy;
+    public MWResourceManager proxy;
     
     public WSClient(String serviceName, String serviceHost, int servicePort) 
     throws MalformedURLException {
     
         URL wsdlLocation = new URL("http", serviceHost, servicePort, 
-                "/" + serviceName + "/service?wsdl");
+                "/" + serviceName + "/mwservice?wsdl");
                 
-        service = new ResourceManagerImplService(wsdlLocation);
+        service = new MiddlewareImplService(wsdlLocation);
         
-        proxy = service.getResourceManagerImplPort();
+        proxy = service.getMiddlewareImplPort();
     }
 
 }

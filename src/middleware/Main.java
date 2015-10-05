@@ -1,6 +1,6 @@
 package middleware;
 
-import client.Client;
+
 import org.apache.catalina.startup.Tomcat;
 import java.io.File;
 
@@ -26,8 +26,6 @@ public class Main {
         //tomcat.addWebapp("", new File(deployDir).getAbsolutePath());
         tomcat.addWebapp("/" + serviceName, new File(deployDir + "/" + serviceName).getAbsolutePath());
         tomcat.start();
-        Client middleClient = new Client("rm","localhost", 8083);
-        middleClient.run();
         tomcat.getServer().await();
     }
 

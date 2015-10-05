@@ -5,8 +5,8 @@
         version="2.0">
 
     <endpoint
-            name="ResourceManager"
-            implementation="server.ResourceManagerImpl"
-            url-pattern="/service"/>
+            name="MWResourceManager"
+            implementation="middleware.MiddlewareImpl"
+            url-pattern="/mwservice"/>
 </endpoints>
 

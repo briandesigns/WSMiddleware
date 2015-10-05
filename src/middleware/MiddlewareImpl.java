@@ -3,11 +3,11 @@
 // CSE 593
 // -------------------------------
 
-package middlewareimpl;
+package middleware;
 
 
-import client.Client;
-import client.WSClient;
+
+import middleware.mwclient.MWClient;
 import server.*;
 
 import java.net.MalformedURLException;
@@ -15,24 +15,19 @@ import java.util.*;
 import javax.jws.WebService;
 
 
-@WebService(endpointInterface = "server.ws.ResourceManager")
+@WebService(endpointInterface = "middleware.MWResourceManager")
 public class MiddlewareImpl implements server.ws.ResourceManager {
 
     protected RMHashtable m_itemHT = new RMHashtable();
-    //    protected WSClient carClient;
-    protected WSClient flightClient;
-    protected Client carClient;
-//    protected WSClient roomClient;
+        protected MWClient flightClient;
+        protected MWClient carClient;
+        protected MWClient roomClient;
 //
     public MiddlewareImpl() {
         try {
-            carClient = new Client("rm", "localhost", 8083);
-//            carClient = new WSClient("rm", "localhost", 8083);
-            flightClient = new WSClient("rm", "localhost", 8083);
-//            roomClient = new WSClient("rm", "localhost", 8083);
-            carClient.run();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
+            carClient = new MWClient("rm", "localhost", 8083);
+            flightClient = new MWClient("rm", "localhost", 8084);
+            roomClient = new MWClient("rm", "localhost", 8085);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -160,8 +155,7 @@ public class MiddlewareImpl implements server.ws.ResourceManager {
     @Override
     public boolean addFlight(int id, int flightNumber,
                              int numSeats, int flightPrice) {
-//        return flightClient.proxy.addFlight(id, flightNumber, numSeats, flightPrice);
-        return false;
+        return flightClient.proxy.addFlight(id, flightNumber, numSeats, flightPrice);
     }
 
     @Override

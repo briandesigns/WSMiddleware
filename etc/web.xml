@@ -12,7 +12,7 @@ Inc.//DTD Web Application 2.3//EN"
     </listener>
 
     <servlet>
-        <servlet-name>service</servlet-name>
+        <servlet-name>mwservice</servlet-name>
         <servlet-class>
         	com.sun.xml.ws.transport.http.servlet.WSServlet
         </servlet-class>
@@ -20,8 +20,8 @@ Inc.//DTD Web Application 2.3//EN"
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>service</servlet-name>
-        <url-pattern>/service</url-pattern>
+        <servlet-name>mwservice</servlet-name>
+        <url-pattern>/mwservice</url-pattern>
     </servlet-mapping>
 
     <session-config>
