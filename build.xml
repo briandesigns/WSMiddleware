@@ -108,6 +108,16 @@
         <antcall target="start-tomcat"/>
     </target>
 
+    <target name="generate-middleware" depends="setup">
+        <wsimport
+                quiet="true"
+                keep="true"
+                destdir="${basedir}/build/classes"
+                package="server.middleware"
+                wsdl="http://${service.host}:${service.port}/${service.name}/service?wsdl">
+        </wsimport>
+    </target>
+
     <target name="build-middleware" depends="setup">
         <annotationProcessing
                 fork="true"
@@ -129,7 +139,7 @@
 
     <target name="middleware" depends="setup">
         <antcall target="clean"/>
-        <antcall target="generate-client"/>
+        <antcall target="generate-middleware"/>
         <antcall target="build-middleware"/>
         <antcall target="create-war"/>
         <antcall target="deploy-war"/>

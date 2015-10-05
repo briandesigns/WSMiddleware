@@ -6,6 +6,7 @@
 package server;
 
 
+import client.Client;
 import client.WSClient;
 
 import java.net.MalformedURLException;
@@ -17,16 +18,21 @@ import javax.jws.WebService;
 public class MiddlewareImpl implements server.ws.ResourceManager {
 
     protected RMHashtable m_itemHT = new RMHashtable();
-//    protected WSClient carClient;
+    //    protected WSClient carClient;
     protected WSClient flightClient;
+    protected Client carClient;
 //    protected WSClient roomClient;
 //
     public MiddlewareImpl() {
         try {
+            carClient = new Client("rm", "localhost", 8083);
 //            carClient = new WSClient("rm", "localhost", 8083);
             flightClient = new WSClient("rm", "localhost", 8083);
 //            roomClient = new WSClient("rm", "localhost", 8083);
+            carClient.run();
         } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

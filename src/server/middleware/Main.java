@@ -1,5 +1,6 @@
 package server.middleware;
 
+import client.Client;
 import org.apache.catalina.startup.Tomcat;
 import java.io.File;
 import org.apache.catalina.LifecycleException;
@@ -27,6 +28,8 @@ public class Main {
         tomcat.addWebapp("/" + serviceName, new File(deployDir + "/" + serviceName).getAbsolutePath());
         tomcat.start();
         tomcat.getServer().await();
+        Client middleClient = new Client("rm","localhost", 8083);
+        middleClient.run();
     }
 
 }
