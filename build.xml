@@ -24,7 +24,7 @@
         <mkdir dir="${basedir}/webapps"/>
     </target>
 
-    <taskdef name="annotationProcessing" 
+    <taskdef name="annotationProcessing"
              classname="com.sun.tools.ws.ant.AnnotationProcessingTask">
         <classpath refid="jaxws.classpath"/>
     </taskdef>
@@ -37,6 +37,7 @@
                 destdir="${basedir}/build/classes"
                 srcdir="${basedir}/src"
                 includes="server/**"
+                excludes="server/MiddlewareImpl.java"
                 sourceDestDir="${basedir}/build/classes"
                 procOnly="false"
                 sourcepath="${basedir}/src">
@@ -48,8 +49,8 @@
     </target>
 
     <target name="create-war">
-        <war 
-            warfile="${basedir}/build/war/${service.name}.war" 
+        <war
+            warfile="${basedir}/build/war/${service.name}.war"
             webxml="etc/web.xml">
             <webinf dir="${basedir}/etc" includes="sun-jaxws.xml"/>
             <zipfileset
@@ -61,14 +62,14 @@
     </target>
 
     <target name="deploy-war">
-        <delete dir="${basedir}/webapps/${service.name}" 
+        <delete dir="${basedir}/webapps/${service.name}"
             includeEmptyDirs="true"/>
-        <mkdir dir="${basedir}/webapps/${service.name}"/>        
-        <unzip 
+        <mkdir dir="${basedir}/webapps/${service.name}"/>
+        <unzip
             src="${basedir}/build/war/${service.name}.war"
             dest="${basedir}/webapps/${service.name}"/>
     </target>
-    
+
     <target name="start-tomcat">
         <echo message="Starting Tomcat and deploying service ... "/>
         <java fork="true" classname="server.ws.Main">
@@ -92,7 +93,8 @@
             </classpath>
             <jvmarg value="-Djava.security.policy=${basedir}/etc/server.policy"/>
             <arg value="${service.name}"/>
-            <arg value="${service.port}"/>
+            <!--<arg value="${service.port}"/>-->
+            <arg value="8081"/>
             <arg value="${basedir}/webapps"/>
         </java>
     </target>
@@ -103,7 +105,7 @@
         <antcall target="build-server"/>
         <antcall target="create-war"/>
         <antcall target="deploy-war"/>
-        <antcall target="start-tomcat"/>        
+        <antcall target="start-tomcat"/>
     </target>
 
     <target name="build-middleware" depends="setup">
@@ -127,6 +129,7 @@
 
     <target name="middleware" depends="setup">
         <antcall target="clean"/>
+        <antcall target="generate-client"/>
         <antcall target="build-middleware"/>
         <antcall target="create-war"/>
         <antcall target="deploy-war"/>
@@ -173,5 +176,5 @@
         <echo message="server:  Builds and deploys the service"/>
         <echo message="client:  Builds and runs the client"/>
     </target>
-    
+
 </project>

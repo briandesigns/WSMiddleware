@@ -5,7 +5,8 @@
 
 package server;
 
-//import client.WSClient;
+
+import client.WSClient;
 
 import java.net.MalformedURLException;
 import java.util.*;
@@ -17,19 +18,19 @@ public class MiddlewareImpl implements server.ws.ResourceManager {
 
     protected RMHashtable m_itemHT = new RMHashtable();
 //    protected WSClient carClient;
-//    protected WSClient flightClient;
+    protected WSClient flightClient;
 //    protected WSClient roomClient;
 //
-//    public MiddlewareImpl() {
-//        try {
-//            carClient = new WSClient("rm", "localhost", 8081);
-//            flightClient = new WSClient("rm", "localhost", 8082);
+    public MiddlewareImpl() {
+        try {
+//            carClient = new WSClient("rm", "localhost", 8083);
+            flightClient = new WSClient("rm", "localhost", 8083);
 //            roomClient = new WSClient("rm", "localhost", 8083);
-//        } catch (MalformedURLException e) {
-//            e.printStackTrace();
-//        }
-//
-//    }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+    }
 
 
     // Basic operations on RMItem //
@@ -159,7 +160,7 @@ public class MiddlewareImpl implements server.ws.ResourceManager {
     @Override
     public boolean deleteFlight(int id, int flightNumber) {
 //        return flightClient.proxy.deleteLfight(id, flightNumber);
-        return true;
+        return false;
     }
 
     // Returns the number of empty seats on this flight.
@@ -220,14 +221,14 @@ public class MiddlewareImpl implements server.ws.ResourceManager {
     @Override
     public boolean addCars(int id, String location, int numCars, int carPrice) {
 //        return carClient.proxy.addCars(id, location, numCars, carPrice);
-        return true;
+        return false;
     }
 
     // Delete cars from a location.
     @Override
     public boolean deleteCars(int id, String location) {
 //        return carClient.proxy.deleteCars(id, location);
-        return true;
+        return false;
     }
 
     // Returns the number of cars available at a location.
@@ -253,14 +254,14 @@ public class MiddlewareImpl implements server.ws.ResourceManager {
     @Override
     public boolean addRooms(int id, String location, int numRooms, int roomPrice) {
 //        return roomClient.proxy.addRooms(id, location, numRooms, roomPrice);
-        return true;
+        return false;
     }
 
     // Delete rooms from a location.
     @Override
     public boolean deleteRooms(int id, String location) {
 //        return roomClient.proxy.deleteRooms(id, location);
-        return true;
+        return false;
     }
 
     // Returns the number of rooms available at a location.
