@@ -1,9 +1,8 @@
-package server.middleware;
+package middleware;
 
 import client.Client;
 import org.apache.catalina.startup.Tomcat;
 import java.io.File;
-import org.apache.catalina.LifecycleException;
 
 /**
  * embedded tomcat launcher that deploys the middleware
@@ -27,9 +26,9 @@ public class Main {
         //tomcat.addWebapp("", new File(deployDir).getAbsolutePath());
         tomcat.addWebapp("/" + serviceName, new File(deployDir + "/" + serviceName).getAbsolutePath());
         tomcat.start();
-        tomcat.getServer().await();
         Client middleClient = new Client("rm","localhost", 8083);
         middleClient.run();
+        tomcat.getServer().await();
     }
 
 }

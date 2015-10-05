@@ -3,11 +3,12 @@
 // CSE 593
 // -------------------------------
 
-package server;
+package middlewareimpl;
 
 
 import client.Client;
 import client.WSClient;
+import server.*;
 
 import java.net.MalformedURLException;
 import java.util.*;

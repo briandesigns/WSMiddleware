@@ -4,6 +4,9 @@
     <property name="service.name" value="rm"/>
     <property name="service.host" value="localhost"/>
     <property name="service.port" value="8080"/>
+    <property name="middleware.name" value="rm"/>
+    <property name="middleware.host" value="localhost"/>
+    <property name="middleware.port" value="8080"/>
 
     <path id="jaxws.classpath">
         <pathelement location="${java.home}/../lib/tools.jar"/>
@@ -37,7 +40,6 @@
                 destdir="${basedir}/build/classes"
                 srcdir="${basedir}/src"
                 includes="server/**"
-                excludes="server/MiddlewareImpl.java"
                 sourceDestDir="${basedir}/build/classes"
                 procOnly="false"
                 sourcepath="${basedir}/src">
@@ -86,15 +88,14 @@
 
     <target name="start-tomcat-middleware">
         <echo message="Starting Tomcat and deploying middleware ... "/>
-        <java fork="true" classname="server.middleware.Main">
+        <java fork="true" classname="middleware.Main">
             <classpath>
                 <path refid="jaxws.classpath"/>
                 <pathelement location="${basedir}/build/classes"/>
             </classpath>
             <jvmarg value="-Djava.security.policy=${basedir}/etc/server.policy"/>
-            <arg value="${service.name}"/>
-            <!--<arg value="${service.port}"/>-->
-            <arg value="8081"/>
+            <arg value="${middleware.name}"/>
+            <arg value="${middleware.port}"/>
             <arg value="${basedir}/webapps"/>
         </java>
     </target>
@@ -113,7 +114,7 @@
                 quiet="true"
                 keep="true"
                 destdir="${basedir}/build/classes"
-                package="server.middleware"
+                package="middleware"
                 wsdl="http://${service.host}:${service.port}/${service.name}/service?wsdl">
         </wsimport>
     </target>
@@ -125,8 +126,7 @@
                 verbose="${verbose}"
                 destdir="${basedir}/build/classes"
                 srcdir="${basedir}/src"
-                includes="server/**"
-                excludes="server/ws/Main.java"
+                includes="middleware/**"
                 sourceDestDir="${basedir}/build/classes"
                 procOnly="false"
                 sourcepath="${basedir}/src">
@@ -138,7 +138,8 @@
     </target>
 
     <target name="middleware" depends="setup">
-        <antcall target="clean"/>
+        <!--<antcall target="clean"/>-->
+        <antcall target="build-client"/>
         <antcall target="generate-middleware"/>
         <antcall target="build-middleware"/>
         <antcall target="create-war"/>
