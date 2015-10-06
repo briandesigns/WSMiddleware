@@ -1,8 +1,3 @@
-// -------------------------------
-// Adapted from Kevin T. Manley
-// CSE 593
-// -------------------------------
-
 package middleware;
 
 
@@ -10,7 +5,11 @@ package middleware;
 import middleware.mwclient.MWClient;
 import server.*;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 import javax.jws.WebService;
 
@@ -25,9 +24,20 @@ public class MiddlewareImpl implements server.ws.ResourceManager {
 
     public MiddlewareImpl() {
         try {
-            flightClient = new MWClient("rm", "localhost", 8083);
-            carClient = new MWClient("rm", "localhost", 8084);
-            roomClient = new MWClient("rm", "localhost", 8085);
+            String[] address = new String[6];
+            String line;
+            BufferedReader br = new BufferedReader(new FileReader("/home/brian/RMList.txt"));
+            int i = 0;
+            while ((line = br.readLine()) != null) {
+                String[] tokens = line.split(" ");
+                address[i]= tokens[0];
+                address[i+1] = tokens[1];
+                i=i+2;
+            }
+
+            flightClient = new MWClient("rm", address[0], Integer.parseInt(address[1]));
+            carClient = new MWClient("rm", address[2], Integer.parseInt(address[3]));
+            roomClient = new MWClient("rm", address[4], Integer.parseInt(address[5]));
         } catch (Exception e) {
             e.printStackTrace();
         }
