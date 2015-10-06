@@ -120,35 +120,35 @@ public class MiddlewareImpl implements server.ws.ResourceManager {
                     + key + ", " + location + ") failed: customer doesn't exist.");
             return false;
         }
+        //Check for item availability and getting price
         MWClient proxy;
-
+        boolean isSuccessfulReservation = false;
+        int itemPrice = -1;
         if(key.contains("car-")) {
             proxy = this.carClient;
+            isSuccessfulReservation = proxy.proxy.reserveCar(id, customerId, location);
+            itemPrice = proxy.proxy.queryCarsPrice(id, location);
         } else if (key.contains("flight-")) {
             proxy = this.flightClient;
+            isSuccessfulReservation = proxy.proxy.reserveFlight(id, customerId, Integer.parseInt(location));
+            itemPrice = proxy.proxy.queryFlightPrice(id, Integer.parseInt(location));
         } else if (key.contains("room-")) {
             proxy = this.roomClient;
+            isSuccessfulReservation = proxy.proxy.reserveRoom(id, customerId, location);
+            itemPrice = proxy.proxy.queryRoomsPrice(id, location);
         } else {
             throw new Exception("can't reserve this");
         }
         // Check if the item is available.
-        ReservableItem item = (ReservableItem) readData(id, key);
-        if (item == null) {
+        if (!isSuccessfulReservation) {
             Trace.warn("RM::reserveItem(" + id + ", " + customerId + ", "
-                    + key + ", " + location + ") failed: item doesn't exist.");
-            return false;
-        } else if (item.getCount() == 0) {
-            Trace.warn("RM::reserveItem(" + id + ", " + customerId + ", "
-                    + key + ", " + location + ") failed: no more items.");
+                    + key + ", " + location + ") failed: item doesn't exist or no more items.");
             return false;
         } else {
             // Do reservation.
-            cust.reserve(key, location, item.getPrice());
-            writeData(id, cust.getKey(), cust);
 
-            // Decrease the number of available items in the storage.
-            item.setCount(item.getCount() - 1);
-            item.setReserved(item.getReserved() + 1);
+            cust.reserve(key, location, itemPrice);
+            writeData(id, cust.getKey(), cust);
 
             Trace.warn("RM::reserveItem(" + id + ", " + customerId + ", "
                     + key + ", " + location + ") OK.");
@@ -382,20 +382,35 @@ public class MiddlewareImpl implements server.ws.ResourceManager {
     // Add flight reservation to this customer.  
     @Override
     public boolean reserveFlight(int id, int customerId, int flightNumber) {
-        return reserveItem(id, customerId,
-                Flight.getKey(flightNumber), String.valueOf(flightNumber));
+        try {
+            return reserveItem(id, customerId,
+                    Flight.getKey(flightNumber), String.valueOf(flightNumber));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     // Add car reservation to this customer. 
     @Override
     public boolean reserveCar(int id, int customerId, String location) {
-        return reserveItem(id, customerId, Car.getKey(location), location);
+        try {
+            return reserveItem(id, customerId, Car.getKey(location), location);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     // Add room reservation to this customer. 
     @Override
     public boolean reserveRoom(int id, int customerId, String location) {
-        return reserveItem(id, customerId, Room.getKey(location), location);
+        try {
+            return reserveItem(id, customerId, Room.getKey(location), location);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 
@@ -403,7 +418,15 @@ public class MiddlewareImpl implements server.ws.ResourceManager {
     @Override
     public boolean reserveItinerary(int id, int customerId, Vector flightNumbers,
                                     String location, boolean car, boolean room) {
-        return false;
+        Iterator it = flightNumbers.iterator();
+
+        boolean isSuccessfulReservation = false;
+        while(it.hasNext()){
+            isSuccessfulReservation = reserveFlight(id, customerId, (Integer)it.next());
+        }
+        if(car) isSuccessfulReservation = reserveCar(id, customerId, location);
+        if(room) isSuccessfulReservation = reserveRoom(id, customerId, location);
+        return isSuccessfulReservation;
     }
 
 }
