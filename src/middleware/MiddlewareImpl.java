@@ -24,9 +24,13 @@ public class MiddlewareImpl implements server.ws.ResourceManager {
 
     public MiddlewareImpl() {
         try {
+            ClassLoader classLoader = getClass().getClassLoader();
+            File file = new File(classLoader.getResource("RMList.txt").getFile());
             String[] address = new String[6];
             String line;
-            BufferedReader br = new BufferedReader(new FileReader("/home/brian/RMList.txt"));
+//            BufferedReader br = new BufferedReader(new FileReader("/home/brian/RMList.txt"));
+            BufferedReader br = new BufferedReader(new FileReader(file));
+
             int i = 0;
             while ((line = br.readLine()) != null) {
                 String[] tokens = line.split(" ");

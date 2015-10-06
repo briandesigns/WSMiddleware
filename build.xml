@@ -20,6 +20,45 @@
         <delete dir="${basedir}/build" includeEmptyDirs="true"/>
     </target>
 
+    <target name="copy-rmlist">
+        <copy todir="${basedir}/build/classes/middleware">
+            <fileset dir="${basedir}/res/">
+                <include name="*"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+        <copy todir="${basedir}/build/">
+            <fileset dir="${basedir}/res/">
+                <include name="*"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+        <copy todir="${basedir}/build/classes">
+            <fileset dir="${basedir}/res/">
+                <include name="*"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+        <copy todir="${basedir}/webapps/mw/WEB-INF/classes/middleware">
+            <fileset dir="${basedir}/res/">
+                <include name="*"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+        <copy todir="${basedir}/webapps/mw/WEB-INF/classes">
+            <fileset dir="${basedir}/res/">
+                <include name="*"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+        <copy todir="${basedir}/webapps/mw/WEB-INF">
+            <fileset dir="${basedir}/res/">
+                <include name="*"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
     <target name="setup">
         <mkdir dir="${basedir}/build"/>
         <mkdir dir="${basedir}/build/classes"/>
@@ -197,6 +236,7 @@
         <antcall target="build-middleware"/>
         <antcall target="create-mwwar"/>
         <antcall target="deploy-mwwar"/>
+        <antcall target="copy-rmlist"/>
         <antcall target="start-tomcat-middleware"/>
     </target>
 
