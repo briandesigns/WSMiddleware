@@ -68,6 +68,7 @@ public class Client extends WSClient {
             }
             //remove heading and trailing white space
             command = command.trim();
+            if(command.equals("")) continue;
             arguments = parse(command);
             
             //decide which of the commands this was

@@ -139,4 +139,5 @@ public interface MWResourceManager {
     public boolean reserveItinerary(int id, int customerId, Vector flightNumbers,
                                     String location, boolean car, boolean room);
 
+
 }

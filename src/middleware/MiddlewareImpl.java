@@ -112,13 +112,13 @@ public class MiddlewareImpl implements server.ws.ResourceManager {
 
     // Query the price of an item.
     protected int queryPrice(int id, String key) {
-        Trace.info("RM::queryCarsPrice(" + id + ", " + key + ") called.");
+        Trace.info("RM::queryPrice(" + id + ", " + key + ") called.");
         ReservableItem curObj = (ReservableItem) readData(id, key);
         int value = 0;
         if (curObj != null) {
             value = curObj.getPrice();
         }
-        Trace.info("RM::queryCarsPrice(" + id + ", " + key + ") OK: $" + value);
+        Trace.info("RM::queryPrice(" + id + ", " + key + ") OK: $" + value);
         return value;
     }
 
@@ -344,13 +344,18 @@ public class MiddlewareImpl implements server.ws.ResourceManager {
                 Trace.info("RM::deleteCustomer(" + id + ", " + customerId + "): "
                         + "deleting " + reservedItem.getCount() + " reservations "
                         + "for item " + reservedItem.getKey());
-                ReservableItem item =
-                        (ReservableItem) readData(id, reservedItem.getKey());
-                item.setReserved(item.getReserved() - reservedItem.getCount());
-                item.setCount(item.getCount() + reservedItem.getCount());
-                Trace.info("RM::deleteCustomer(" + id + ", " + customerId + "): "
-                        + reservedItem.getKey() + " reserved/available = "
-                        + item.getReserved() + "/" + item.getCount());
+                if(reservedItem.getKey().contains("flight-")) {
+                    flightClient.proxy.increaseReservableItemCount(id, reservedItem.getKey(), reservedItem.getCount());
+                } else if (reservedItem.getKey().contains("car-")) {
+                    carClient.proxy.increaseReservableItemCount(id, reservedItem.getKey(), reservedItem.getCount());
+
+                } else if (reservedItem.getKey().contains("room")) {
+                    roomClient.proxy.increaseReservableItemCount(id, reservedItem.getKey(), reservedItem.getCount());
+
+                } else {
+                    Trace.info("reserved item does not exist");
+                }
+
             }
             // Remove the customer from the storage.
             removeData(id, cust.getKey());
@@ -436,11 +441,30 @@ public class MiddlewareImpl implements server.ws.ResourceManager {
 
         boolean isSuccessfulReservation = false;
         while(it.hasNext()){
-            isSuccessfulReservation = reserveFlight(id, customerId, (Integer)it.next());
+            try {
+                isSuccessfulReservation = reserveFlight(id, customerId, getInt(it.next()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         if(car) isSuccessfulReservation = reserveCar(id, customerId, location);
         if(room) isSuccessfulReservation = reserveRoom(id, customerId, location);
         return isSuccessfulReservation;
     }
+
+    @Override
+    public boolean increaseReservableItemCount(int id, String key, int Count) {
+        return false;
+    }
+
+    public int getInt(Object temp) throws Exception {
+        try {
+            return (new Integer((String)temp)).intValue();
+        }
+        catch(Exception e) {
+            throw e;
+        }
+    }
+
 
 }
