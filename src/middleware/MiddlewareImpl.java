@@ -336,7 +336,8 @@ public class MiddlewareImpl implements server.ws.ResourceManager {
             return false;
         } else {
             // Increase the reserved numbers of all reservable items that 
-            // the customer reserved. 
+            // the customer reserved.
+            boolean reservableItemUpdated = false;
             RMHashtable reservationHT = cust.getReservations();
             for (Enumeration e = reservationHT.keys(); e.hasMoreElements();) {
                 String reservedKey = (String) (e.nextElement());
@@ -345,12 +346,12 @@ public class MiddlewareImpl implements server.ws.ResourceManager {
                         + "deleting " + reservedItem.getCount() + " reservations "
                         + "for item " + reservedItem.getKey());
                 if(reservedItem.getKey().contains("flight-")) {
-                    flightClient.proxy.increaseReservableItemCount(id, reservedItem.getKey(), reservedItem.getCount());
+                    reservableItemUpdated = flightClient.proxy.increaseReservableItemCount(id, reservedItem.getKey(), reservedItem.getCount());
                 } else if (reservedItem.getKey().contains("car-")) {
-                    carClient.proxy.increaseReservableItemCount(id, reservedItem.getKey(), reservedItem.getCount());
+                    reservableItemUpdated = carClient.proxy.increaseReservableItemCount(id, reservedItem.getKey(), reservedItem.getCount());
 
                 } else if (reservedItem.getKey().contains("room")) {
-                    roomClient.proxy.increaseReservableItemCount(id, reservedItem.getKey(), reservedItem.getCount());
+                    reservableItemUpdated = roomClient.proxy.increaseReservableItemCount(id, reservedItem.getKey(), reservedItem.getCount());
 
                 } else {
                     Trace.info("reserved item does not exist");
@@ -358,9 +359,15 @@ public class MiddlewareImpl implements server.ws.ResourceManager {
 
             }
             // Remove the customer from the storage.
-            removeData(id, cust.getKey());
-            Trace.info("RM::deleteCustomer(" + id + ", " + customerId + ") OK.");
-            return true;
+            if (reservableItemUpdated){
+                removeData(id, cust.getKey());
+                Trace.info("RM::deleteCustomer(" + id + ", " + customerId + ") OK.");
+                return true;
+            } else {
+                Trace.info("RM::deleteCustomer(" + id + ", " + customerId + ") failed. could not update one o the reservable items");
+                return false;
+            }
+
         }
     }
 
